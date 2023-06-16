@@ -17,23 +17,30 @@ class ApiManager {
   // String token  = '';
 
   Future<Response?> request(String url, String method,
-      {Map<String, dynamic>? data, Map<String, dynamic>? queryParams, String? token}) async {
+      {Map<String, dynamic>? data,
+      Map<String, dynamic>? queryParams,
+      String? token}) async {
     try {
-      AndroidDeviceInfo deviceInfo = await DeviceInfoPlugin().androidInfo;
-      print("DEVICE INFO: ${deviceInfo.supported64BitAbis}");
+      var deviceInfo;
+      if (Platform.isAndroid) {
+        deviceInfo = await DeviceInfoPlugin().androidInfo;
+      } else if (Platform.isIOS) {
+        deviceInfo = await DeviceInfoPlugin().iosInfo;
+      }
 
       final requestTime = DateFormat('dd-MM-y HH:mm:ss').format(DateTime.now());
       final message = url.split("/");
       Map<String, dynamic> postParams = {
-        "MsgID": deviceInfo.id + requestTime,
+        "MsgID":
+            (Platform.isIOS ? deviceInfo.identifierForVendor : deviceInfo.id) +
+                requestTime,
         "MsgType": message[message.length - 1],
         "TransactionID": DateTime.now().toString() +
             (Random().nextInt(10) * 10000).floor().toString(),
       };
 
       Map<String, dynamic> headers = {
-        "Authorization":
-            "Bearer ${token}",
+        "Authorization": "Bearer ${token}",
         'Content-Type': 'application/json',
       };
       print("Requestsssss ${headers}");
@@ -41,8 +48,6 @@ class ApiManager {
       if (data != null) {
         postParams = {...postParams, ...data};
       }
-
-
 
       final requestData = {
         "MsgType": message[message.length - 1],
@@ -56,7 +61,9 @@ class ApiManager {
         "IpAddress": '222.252.30.205',
         // "DeviceInfo": deviceInfo.model,
         "DeviceInfo": (Platform.isIOS ? 'Iphone iOS ' : 'Android ') +
-            deviceInfo.version.release,
+            ((Platform.isIOS)
+                ? deviceInfo.localizedModel
+                : deviceInfo.version.release),
         "DeviceID": deviceInfo.id,
         "Data": jsonEncode(postParams),
         "Signature": "FAKE",

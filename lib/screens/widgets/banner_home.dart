@@ -10,7 +10,7 @@ class BannerHome extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(top: 10),
-      height: 150,
+      height: 130,
       child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: listBanner.length,
@@ -19,10 +19,12 @@ class BannerHome extends StatelessWidget {
               borderRadius: BorderRadius.all(Radius.circular(20)),
               child: Container(
                 width: MediaQuery.of(context).size.width,
-                height: 100,
+                height: 130,
+                alignment: Alignment.center,
                 margin: EdgeInsets.only(left: 20),
                 child: Image.network(
                   listBanner[index].ImageUrl,
+                  height: 130,
                   fit: BoxFit.fitHeight,
                   errorBuilder: (context, object, trace) {
                     return Text("Không tìm thấy ảnh! ");

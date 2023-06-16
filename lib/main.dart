@@ -2,6 +2,7 @@ import 'package:demo_ewallet/blocs/login_bloc/login_bloc.dart';
 import 'package:demo_ewallet/global.dart';
 import 'package:demo_ewallet/screens/home_screen.dart';
 import 'package:demo_ewallet/screens/login_screen.dart';
+import 'package:demo_ewallet/screens/otp_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

@@ -93,13 +93,18 @@ class _CashInScreenState extends State<CashInView> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: Icon(
-                          Icons.arrow_back_ios,
-                          color: Colors.white,
+                      Container(
+                        width: 50,
+                        height: 50,
+                        alignment: Alignment.centerLeft,
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Icon(
+                            Icons.arrow_back_ios,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                       Expanded(

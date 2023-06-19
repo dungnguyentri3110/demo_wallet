@@ -64,7 +64,7 @@ class ApiManager {
             ((Platform.isIOS)
                 ? deviceInfo.localizedModel
                 : deviceInfo.version.release),
-        "DeviceID": deviceInfo.id,
+        "DeviceID": Platform.isIOS ? deviceInfo.identifierForVendor : deviceInfo.id,
         "Data": jsonEncode(postParams),
         "Signature": "FAKE",
       };

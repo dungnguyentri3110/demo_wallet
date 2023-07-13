@@ -7,6 +7,7 @@ import 'package:demo_ewallet/blocs/login_bloc/login_action.dart';
 import 'package:demo_ewallet/blocs/login_bloc/login_state.dart';
 import 'package:demo_ewallet/blocs/models/home_model.dart';
 import 'package:demo_ewallet/global.dart';
+import 'package:demo_ewallet/navigation/TabHomeNavigation.dart';
 import 'package:demo_ewallet/navigation/home_naviagtion_params.dart';
 import 'package:demo_ewallet/screens/home_screen.dart';
 import 'package:demo_ewallet/services/api_manager.dart';
@@ -21,6 +22,8 @@ import 'dart:io';
 import 'dart:math';
 
 import 'dart:convert';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginModel {
   String Token;
@@ -119,18 +122,19 @@ class LoginBloc extends Bloc<LoginAction, LoginState> {
 
   void onFetchAllDataSuccess(
       FetchAllDataSuccess event, Emitter<LoginState> emitter) {
-    Navigator.pushAndRemoveUntil(
-        event.context, createRoute(event.listBanner!), (route) => false);
+    print("Null Value ${event.listBanner} - $phoneNumber - $walletInfo");
+      Navigator.pushAndRemoveUntil(
+          event.context, createRoute(event.listBanner ?? []), (route) => false);
   }
 
   Route createRoute(List<BannerH> list) {
     return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => HomeScreen(
-        homeParams: HomeNavigationParams(
-            walletInfo: walletInfo!,
-            phoneNumber: phoneNumber!,
-            listBanner: list),
-      ),
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          TabHomeNavigation(
+              homeNavigationParams: HomeNavigationParams(
+                  walletInfo: walletInfo ?? WalletInfo.initState(),
+                  phoneNumber: phoneNumber ?? "",
+                  listBanner: list)),
       transitionDuration: const Duration(milliseconds: 150),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         const begin = Offset(1.0, 0.0);
@@ -139,7 +143,6 @@ class LoginBloc extends Bloc<LoginAction, LoginState> {
 
         var tween =
             Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
         return SlideTransition(
           position: animation.drive(tween),
           child: child,
@@ -152,6 +155,8 @@ class LoginBloc extends Bloc<LoginAction, LoginState> {
     try {
       context = event.context;
       Loading.showLoading(event.context);
+      phoneNumber = event.phoneNumber;
+      final sharePref = await SharedPreferences.getInstance();
       final bytes = utf8.encode(event.passworld);
       final encodePassword = sha256.convert(bytes);
       Map<String, dynamic> requestData = {
@@ -160,13 +165,17 @@ class LoginBloc extends Bloc<LoginAction, LoginState> {
         "PushToken": ""
       };
 
+      print("request data $requestData");
+
       Response? res = await apiManager.request('account/login_account', 'POST',
           data: requestData);
+      Loading.hideLoading();
       print("token ${res}");
       if (res?.statusCode == 200 && res?.data["ErrorCode"] == 0) {
         final token = jsonDecode(res?.data['Data']);
         LoginModel login = LoginModel.fromJson(token, event.phoneNumber);
         tokenApp = token['Token'];
+        sharePref.setStringList("authen", [event.passworld, event.phoneNumber]);
 
         sendPort?.send(login);
       } else if (res?.statusCode == 200 && res?.data["ErrorCode"] == 27) {
@@ -185,6 +194,8 @@ class LoginBloc extends Bloc<LoginAction, LoginState> {
             final token = jsonDecode(res?.data['Data']);
             LoginModel login = LoginModel.fromJson(token, event.phoneNumber);
             tokenApp = token['Token'];
+            sharePref
+                .setStringList("authen", [event.passworld, event.phoneNumber]);
             sendPort?.send(login);
           }
         }
@@ -212,7 +223,7 @@ class LoginBloc extends Bloc<LoginAction, LoginState> {
     }
   }
 
-  Future onGetWalletInfo(String token , String phone) async {
+  Future onGetWalletInfo(String token, String phone) async {
     try {
       Response? response = await apiManager.request(
           "account/get_wallet_info", "POST",

@@ -15,6 +15,9 @@ class WalletInfo {
       required this.SexType,
       required this.ActiveEmail,
       required this.AvailableBlance});
+  factory WalletInfo.initState(){
+    return WalletInfo(FullName: "", DateOfBirth: "", SexType: 0, ActiveEmail: 0, AvailableBlance: "");
+  }
 
   factory WalletInfo.fromJson(Map<String, dynamic> json) {
     return WalletInfo(

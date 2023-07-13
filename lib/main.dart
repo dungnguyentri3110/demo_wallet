@@ -1,13 +1,44 @@
+import 'package:demo_ewallet/blocs/log_time_bloc/log_time_bloc.dart';
 import 'package:demo_ewallet/blocs/login_bloc/login_bloc.dart';
 import 'package:demo_ewallet/global.dart';
 import 'package:demo_ewallet/screens/home_screen.dart';
+import 'package:demo_ewallet/screens/log_time_view.dart';
 import 'package:demo_ewallet/screens/login_screen.dart';
 import 'package:demo_ewallet/screens/otp_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class MainAppBloc extends StatelessWidget {
+  const MainAppBloc({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(create: (_) => LogTimeBloc(), child: const MainApp(),);
+  }
+}
+
+class MainApp extends StatelessWidget {
+  const MainApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.centerLeft,
+      children: [
+        const MyApp(),
+        Positioned(top: 30, child: LogTimeView())
+      ],
+    );
+  }
+}
+
+
+
 
 void main() {
-  runApp(const MyApp());
+  runApp(const MainAppBloc());
 }
 
 class MyApp extends StatelessWidget {
@@ -20,27 +51,16 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       navigatorKey: navigationState,
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a blue toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: BlocProvider(
-        create: (_)=> LoginBloc(),
-        child: const LoginScreen(),
+      home: Scaffold(
+        body: Stack(
+          children: [
+            const LoginScreen(),
+            Text("hellow")
+          ],
+        ),
       ),
     );
   }

@@ -14,8 +14,8 @@ class _OtpScreenState extends State<OtpScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
-        child: HeaderLogin(),
         preferredSize: Size.fromHeight(200),
+        child: HeaderLogin(phoneNumber: "",),
       ),
       body: GestureDetector(
         behavior: HitTestBehavior.opaque,

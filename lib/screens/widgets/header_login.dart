@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HeaderLogin extends StatelessWidget {
-  const HeaderLogin({super.key});
+  HeaderLogin({super.key, required this.phoneNumber});
+  String phoneNumber;
 
   @override
   Widget build(BuildContext context) {
@@ -47,22 +48,34 @@ class HeaderLogin extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          state?.phoneExist == true
-                              ? "Nhập mật khẩu"
-                              : "Nhập số điện thoại",
-                          style: TextStyle(
+                        if(phoneNumber.isNotEmpty)...{
+                          Text("Xin chào $phoneNumber", style: const TextStyle(
                               fontSize: 26,
                               fontWeight: FontWeight.w700,
-                              color: Colors.white),
-                        ),
-                        Text(
-                          state?.phoneExist == true
-                              ? "Mật khẩu để bảo mật tài khoản và xác nhận giao dịch khi thanh toán"
-                              : "Đăng ký/ Đăng nhập EPAY ngay",
-                          style:
-                              TextStyle(fontSize: 16, color: Color(0xff666666)),
-                        )
+                              color: Colors.white)),
+                          Text(phoneNumber,
+                            style:
+                            const TextStyle(fontSize: 16, color: Color(0xff666666)),
+                          )
+                        }else...{
+                          Text(
+                            state?.phoneExist == true
+                                ? "Nhập mật khẩu"
+                                : "Nhập số điện thoại",
+                            style: const TextStyle(
+                                fontSize: 26,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white),
+                          ),
+                          Text(
+                            state?.phoneExist == true
+                                ? "Mật khẩu để bảo mật tài khoản và xác nhận giao dịch khi thanh toán"
+                                : "Đăng ký/ Đăng nhập EPAY ngay",
+                            style:
+                            TextStyle(fontSize: 16, color: Color(0xff666666)),
+                          )
+                        }
+
                       ],
                     ),
                   );

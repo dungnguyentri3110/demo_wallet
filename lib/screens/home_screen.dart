@@ -1,6 +1,8 @@
 import 'package:demo_ewallet/blocs/home_bloc/home_action.dart';
 import 'package:demo_ewallet/blocs/home_bloc/home_bloc.dart';
 import 'package:demo_ewallet/blocs/home_bloc/home_state.dart';
+import 'package:demo_ewallet/blocs/log_time_bloc/log_time_bloc.dart';
+import 'package:demo_ewallet/blocs/log_time_bloc/log_time_event.dart';
 import 'package:demo_ewallet/blocs/models/home_model.dart';
 import 'package:demo_ewallet/navigation/home_naviagtion_params.dart';
 import 'package:demo_ewallet/screens/widgets/banner_home.dart';
@@ -33,13 +35,16 @@ class HomeScreenView extends StatefulWidget {
   State<HomeScreenView> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreenView> {
+class _HomeScreenState extends State<HomeScreenView>  with AutomaticKeepAliveClientMixin{
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     context.read<HomeBloc>().add(
         GetHomeInfo(phone: widget.homeParams.phoneNumber, context: context));
+    Future.delayed(const Duration(milliseconds: 1000), (){
+      context.read<LogTimeBloc>().add(LogDone());
+    });
   }
 
   @override
@@ -66,4 +71,8 @@ class _HomeScreenState extends State<HomeScreenView> {
       ),
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
